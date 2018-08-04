@@ -1,15 +1,16 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QDesktopWidget, QApplication
+from PyQt5.QtWidgets import QWidget, QDesktopWidget, QApplication, QMainWindow
+from PyQt5 import (QtCore, QtGui)
 
 
-class Example(QWidget):
+class Example(QMainWindow):
     
     def __init__(self):
         super().__init__()
         
         self.initUI()
-        
-        
+        self.setStyleSheet("QMainWindow {background= 'red'}")
+    
     def initUI(self):               
         
         self.resize(250, 150)

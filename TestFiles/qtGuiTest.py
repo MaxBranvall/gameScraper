@@ -1,31 +1,36 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QDesktopWidget, QApplication, QMainWindow
-from PyQt5 import (QtCore, QtGui)
+from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit, 
+    QTextEdit, QGridLayout, QApplication, QPushButton)
 
 
-class Example(QMainWindow):
+class Example(QWidget):
     
     def __init__(self):
         super().__init__()
         
         self.initUI()
-        self.setStyleSheet("QMainWindow {background= 'red'}")
-    
-    def initUI(self):               
         
-        self.resize(250, 150)
-        self.center()
         
-        self.setWindowTitle('Center')    
+    def initUI(self):
+        
+        title = QLabel('Title')
+        author = QLabel('Author')
+        review = QLabel('Review')
+
+        titleEdit = QPushButton('!')
+        authorEdit = QPushButton('4')
+        reviewEdit = QPushButton('5')
+
+        # grid = QGridLayout()
+        # grid.setSpacing(10)
+
+        # grid.addWidget(titleEdit, 5, 0)
+        
+        # self.setLayout(grid) 
+        
+        self.setGeometry(300, 300, 650, 350)
+        self.setWindowTitle('Review')    
         self.show()
-        
-        
-    def center(self):
-        
-        qr = self.frameGeometry()
-        cp = QDesktopWidget().availableGeometry().center()
-        qr.moveCenter(cp)
-        self.move(qr.topLeft())
         
         
 if __name__ == '__main__':

@@ -8,14 +8,12 @@ class Program(Qw.QMainWindow):
     def __init__(self):
 
         super().__init__()
-        self.initUI()
 
         self.resize(750, 600)
         self.setWindowTitle('Game Scraper')
         self.setStyleSheet("background-image: url(Images_and_HTML/bg.jpg)")
 
-        self.center()
-        self.show()
+        self.initUI()
 
     def initUI(self):
 
@@ -25,8 +23,8 @@ class Program(Qw.QMainWindow):
         self.welcomeTitle.setFont(titleFont)
         self.welcomeTitle.adjustSize()
 
-    
-
+        self.center()
+        self.show()
 
     def center(self):
 

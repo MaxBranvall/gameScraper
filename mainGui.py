@@ -1,7 +1,7 @@
 # GUI of the program. User inputs will be sent to backend.py to be handled.
 # Prices, titles, etc. will be recieved from backend.py ready to be displayed.
 
-import (sys, backend)
+import sys, backend
 from PyQt5 import QtWidgets as Qw
 from PyQt5 import (QtCore, QtGui)
 

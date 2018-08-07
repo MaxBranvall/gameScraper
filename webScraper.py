@@ -5,3 +5,9 @@ import requests, urllib, backend
 url = [
     'https://www.bing.com/search?q=',
 ]
+
+
+class Example:
+
+    def printHelloWithInput(text):
+        print(url[0] + text)

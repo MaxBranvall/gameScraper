@@ -27,10 +27,17 @@ if space in game and platform:
     newUrl = (url[0] + gameJoin + '+' + platJoin)
 
 if space in game:
-    gameJoin = game.split()
+    gameSplit = game.split()
+    gameJoin = "+".join(gameSplit)
+    newUrl = (url[0] + gameJoin + '+' + platform)
 
 if space in platform:
     platSplit = platform.split()
+    platJoin = "+".join(platSplit)
+    newUrl = (url[0] + game + '+' + platJoin)
+
+# newUrl = (url[0] + gameJoin + '+' + platJoin)
+
     
 # Retrieves page and content to parse
 getPage = requests.get(newUrl)
@@ -39,7 +46,7 @@ htmlContent = html.fromstring(getPage.content)
 # Scrapes for the amazon link
 amazonLink = htmlContent.xpath('//*[@id="b_results"]/li[1]/h2/a/@href')
 # Gets the amazon page
-amazonPage = requests.get(amazonLink[0], headers = header)
+amazonPage = requests.get(amazonLink[0], headers= header)
 # Downloads the amazon page to parse
 amazonContent = html.fromstring(amazonPage.content)
 
@@ -47,10 +54,10 @@ amazonContent = html.fromstring(amazonPage.content)
 getTitle = amazonContent.xpath('//*[@id="productTitle"]/text()')
 price1 = amazonContent.xpath('//*[@id="priceblock_ourprice"]/span[2]/text()')
 price2 = amazonContent.xpath('//*[@id="priceblock_ourprice"]/span[3]/text()')
-sourcePic = amazonContent.xpath('//div[@id="imgTagWrapperId"]/img/@src')
+# sourcePic = amazonContent.xpath('//div[@id="imgTagWrapperId"]/img/@src')
 
 # Gets the link to download the cover picture
-cover = sourcePic[0]
+# cover = sourcePic[0]
 
 # Removes \n and white space from title
 def fixTitle(t):
@@ -59,7 +66,7 @@ def fixTitle(t):
     print(title)
 
 # Downloads the picture to our chosen location
-urllib.request.urlretrieve(cover, filename= 'Images_and_HTML/cover.jpg')
+# urllib.request.urlretrieve(cover, filename= 'Images_and_HTML/cover.jpg')
 
 # Prints the title and price in our format
 fixTitle(getTitle[0])

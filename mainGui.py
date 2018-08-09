@@ -66,6 +66,8 @@ class Program(QWidget):
         self.chooseGameTextbox = QLineEdit()
         self.choosePlatformBox = QComboBox()
 
+        self.chooseGameTextbox.setText('rocket league')
+
         # Modify and add widget functionality here
 
         self.welcomeTitle.setFont(self.mainTitleFont)

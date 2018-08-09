@@ -2,22 +2,27 @@
 # sending off to appropriate file.
 import webScraper, mainGui
 
-class inputOutputHandling:
+class BACKEND_IO:
 
-    def recieveUserInput(text):
-        gameChoice = text
-        modifyText.prepareTextForWebSearch(gameChoice)
+    def inputFromGUI(game, platform):
+        gameChoice = game
+        platformChoice = platform
+        Modification.gameAndPlatformModification(gameChoice, platformChoice)
 
-    def sendToScraper(text):
-        webScraper.Example.printHelloWithInput(text)
+    def sendToScraper(game, platform):
+        webScraper.SCRAPER_IO.inputFromBackend(game, platform)
 
-class modifyText:
+class Modification:
 
-    def prepareTextForWebSearch(text):
-        addPlus = text + '+'
-        try:
-            inputOutputHandling.sendToScraper(addPlus)
+    def gameAndPlatformModification(game, platform):
 
-        except TypeError:
-            print('nothing sent')
+        gameSplit = game.split()
+        platformSplit = platform.split()
+
+        gameJoin = '+'.join(gameSplit)
+        platformJoin = '+'.join(platformSplit)
+
+        BACKEND_IO.sendToScraper(gameJoin, platformJoin)
+
+        
         

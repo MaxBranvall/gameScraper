@@ -1,13 +1,17 @@
 # GUI of the program. User inputs will be sent to backend.py to be handled.
 # Prices, titles, etc. will be recieved from backend.py ready to be displayed.
 
+#TODO WARNING light grey/default background is bugged and doesn't clear textbox and combo box properly..
+
 import sys, backend
-from PyQt5 import QtWidgets as Qw
-from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QPushButton, QLabel, QLineEdit, QComboBox)
-from PyQt5 import (QtCore, QtGui)
+from PyQt5 import QtWidgets as Qw #TODO Remove this
+from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QPushButton,
+                            QLabel, QLineEdit, QComboBox, QMainWindow, 
+                            QWidget, QApplication)
+from PyQt5.QtGui import QFont
 
 
-class Program(Qw.QWidget):
+class Program(QWidget):
 
     PLATFORMS = ['Selections:', 'Xbox One', 'PlayStation 4', 'PC', 'Nintendo Switch']
 
@@ -15,18 +19,19 @@ class Program(Qw.QWidget):
 
         super().__init__()
 
-        # self.setStyleSheet("background-image: url(Images_and_HTML/bg.jpg)")
-        # self.setStyleSheet("QWidget { background-color: grey }")
+        # self.setStyleSheet('background: grey')
+
+        # self.setStyleSheet("QWidget {background-image: url(Images_and_HTML/bg.jpg)}")
+
         # self.customSheet = 'QLabel {\
             # color: orange;\
             # background-color: blue;\
         # }'
 
+        self.mainTitleFont = QFont('Sans Serif', 40, 30) # Font Name, Size, Weight, Italics
+        self.subTitleFont = QFont('Sans Serif', 30, 10)
 
-        self.mainTitleFont = QtGui.QFont('Sans Serif', 40, 30) # Font Name, Size, Weight, Italics
-        self.subTitleFont = QtGui.QFont('Sans Serif', 30, 10)
-
-        self.resize(1, 1) # W x H
+        self.resize(600, 400) # W x H
         self.center() # centers window on screen
         self.setWindowTitle('The Frugal Gamer')
 
@@ -45,7 +50,6 @@ class Program(Qw.QWidget):
         mainScreenLayout.addLayout(self.searchAndClearHbox)
 
         self.setLayout(mainScreenLayout)
-
 
     def initUI(self):
         
@@ -77,13 +81,15 @@ class Program(Qw.QWidget):
         self.buttonAndInputLayout()
         self.extraVBoxes()
 
-    def printResults(self):
+    # Functionality Methods
+
+    def printResults(self): # TODO just a test method..
 
         try:
             gameChoice = self.chooseGameTextbox.text()
             platFormChoice = self.choosePlatformBox.currentText()
 
-            if (platFormChoice == self.PLATFORMS[0] or gameChoice == '' or ' '):
+            if (platFormChoice == self.PLATFORMS[0]): #TODO in backend, split game choice, if it's an empty list raise an error
                 raise ValueError
         
         except ValueError:
@@ -91,12 +97,13 @@ class Program(Qw.QWidget):
             print('Error.. No platform selected')
         
         else:
-            print(gameChoice, platFormChoice)
+            GUI_IO.sendToBackend(gameChoice, platFormChoice)
             self.chooseGameTextbox.clear()
-
 
     def clearTextbox(self):
         self.chooseGameTextbox.clear()
+
+    # Layout Methods
 
     def labelLayout(self):
 
@@ -167,12 +174,12 @@ class Program(Qw.QWidget):
         windowFrame.moveCenter(centerOfMonitor)
         self.move(windowFrame.topLeft())
 
+# This class will handle all input and output for the GUI
 class GUI_IO:
     
-    def sendToBackend(self):
-
-        gameChoice = self.textBox.text()
-        backend.inputOutputHandling.recieveUserInput(gameChoice)
+    def sendToBackend(game, platform):
+        
+        backend.BACKEND_IO.inputFromGUI(game, platform)
 
 def main():
     app = Qw.QApplication(sys.argv)

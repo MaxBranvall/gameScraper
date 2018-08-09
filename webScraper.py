@@ -7,7 +7,11 @@ url = [
 ]
 
 
-class Example:
+class SCRAPER_IO:
 
-    def printHelloWithInput(text):
-        print(url[0] + text)
+    def inputFromBackend(game, platform):
+
+        gameChoice = game
+        platformChoice = platform
+
+        print(gameChoice, platformChoice)

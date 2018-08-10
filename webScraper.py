@@ -18,6 +18,11 @@ class SCRAPER_IO:
 
         Scraping.getURL(game, platform)
 
+    def sendToBackend():
+
+        
+        Scraping.getURL.URL
+
 class Scraping:
 
     def getURL(game, platform):
@@ -30,8 +35,24 @@ class Scraping:
 
         amazonLink = rawPage.xpath('//*[@id="b_results"]/li[2]/h2/a/@href')
 
-        print(amazonLink)
+        while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
 
+            n = 0
+            n += 1
+
+            amazonLink = rawPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(n))
+
+            if 'amazon' in amazonLink[0]:
+
+                print(amazonLink)
+                print('in link')
+
+                getAmazonPage = requests.get(amazonLink[0], headers= header)
+                getAmazonContent = html.fromstring(getAmazonPage.content)
+
+                Scraping.scrapeContents(getAmazonContent)
+        
+        # print('getAmazon')
         getAmazonPage = requests.get(amazonLink[0], headers= header)
         getAmazonContent = html.fromstring(getAmazonPage.content)
 
@@ -39,11 +60,27 @@ class Scraping:
 
     def scrapeContents(newUrl):
 
+        # print('scrape')
         amazonPage = newUrl
 
-        price1 = amazonPage.xpath('//*[@id="priceblock_ourprice"]/span[2]/text()')
-        price2 = amazonPage.xpath('//*[@id="priceblock_ourprice"]/span[3]/text()')
+        def getTitle():
 
-        print('$'+price1[0]+'.'+price2[0])
+            rawTitle = amazonPage.xpath('//*[@id="productTitle"]/text()')
+            titleSplit = rawTitle[0].split()
+            gameTitle = ' '.join(titleSplit)
+
+            return gameTitle
+
+        try:
+            price1 = amazonPage.xpath('//*[@id="priceblock_ourprice"]/span[2]/text()')
+            price2 = amazonPage.xpath('//*[@id="priceblock_ourprice"]/span[3]/text()')
+
+            if (IndexError): # this will happen if amazon pulls up a used sale first
+                price1 = amazonPage.xpath('//*[@id="priceblock_usedprice"]/span[2]/text()')
+                price2 = amazonPage.xpath('//*[@id="priceblock_usedprice"]/span[3]/text()')
+        
+        finally:
+            print(getTitle())
+            print('$'+price1[0]+'.'+price2[0])
 
         

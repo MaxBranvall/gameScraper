@@ -10,9 +10,20 @@ class BACKEND_IO:
         platformChoice = platform
         Modification.gameAndPlatformModification(gameChoice, platformChoice)
 
+    def inputFromScraper(message):
+
+        statusMessage = message
+
+        sendToGui(mess= statusMessage)
+
     def sendToScraper(game, platform):
-        
+
         webScraper.SCRAPER_IO.inputFromBackend(game, platform)
+
+    def sendToGui(**kwargs):
+
+        print(mess)
+        # mainGui.GUI_IO.fromBackend()
 
 class Modification:
 
@@ -26,7 +37,8 @@ class Modification:
                 raise ValueError
 
         except ValueError:
-            print('Invalid Game Choice')
+            
+            mainGui.warningMessages(warning= 'invalidGame')
 
         else:
             gameJoin = '+'.join(gameSplit)

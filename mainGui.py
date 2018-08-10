@@ -3,14 +3,56 @@
 
 #TODO WARNING light grey/default background is bugged and doesn't clear textbox and combo box properly..
 
-import sys, backend
-from PyQt5 import QtWidgets as Qw #TODO Remove this
+import sys, backend, random
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QPushButton,
                             QLabel, QLineEdit, QComboBox, QMainWindow, 
-                            QWidget, QApplication)
+                            QWidget, QApplication, QMessageBox, QDesktopWidget)
 from PyQt5.QtGui import QFont
 
+# This class will handle all input and output for the GUI
+class GUI_IO:
+    
+    def sendToBackend(game, platform):
+        
+        backend.BACKEND_IO.inputFromGUI(game, platform)
 
+    def fromBackend(*args):
+
+        Program.statusBarHandling(message= '')
+
+# The frame and main window.
+class Frame(QMainWindow):
+
+    def __init__(self):
+        
+        super().__init__()
+        
+        self.mainWindow = Program()
+        # other windows will go here
+        self.setCentralWidget(self.mainWindow)
+
+        self.initUI()
+
+    def initUI(self):
+
+        self.setStyleSheet("QMainWindow {background-image: url(Images_and_HTML/carbonBG.jpg)}")
+
+        self.resize(600, 400)
+        self.center()
+        
+        self.setWindowTitle('The Frugal Gamer')
+
+        self.show()
+
+    def center(self): # Centers window on screen
+
+        windowFrame = self.frameGeometry()
+        centerOfMonitor = QDesktopWidget().availableGeometry().center()
+
+        windowFrame.moveCenter(centerOfMonitor)
+        self.move(windowFrame.topLeft())
+
+# holds all widgets
 class Program(QWidget):
 
     PLATFORMS = ['Selections:', 'Xbox One', 'PlayStation 4', 'PC', 'Nintendo Switch']
@@ -21,19 +63,12 @@ class Program(QWidget):
 
         # self.setStyleSheet('background: grey')
 
-        # self.setStyleSheet("QWidget {background-image: url(Images_and_HTML/bg.jpg)}")
+        # self.setStyleSheet("{background-image: url(Images_and_HTML/bg.jpg)}")
 
-        # self.customSheet = 'QLabel {\
-            # color: orange;\
-            # background-color: blue;\
-        # }'
+        self.titleColor = 'color: #d3d3d3'
 
         self.mainTitleFont = QFont('Sans Serif', 40, 30) # Font Name, Size, Weight, Italics
         self.subTitleFont = QFont('Sans Serif', 30, 10)
-
-        self.resize(600, 400) # W x H
-        self.center() # centers window on screen
-        self.setWindowTitle('The Frugal Gamer')
 
         self.initUI()
         self.show()
@@ -60,23 +95,26 @@ class Program(QWidget):
         self.choosePlatformLabel = QLabel('Choose a Platform: ')
 
         self.searchButton = QPushButton('Search')
-        self.savedSearchesButton = QPushButton('Saved Searches')
+        self.savedSearchesButton = QPushButton('Coming Soon\nSaved Searches')
         self.clearTextboxButton = QPushButton('Clear')
 
         self.chooseGameTextbox = QLineEdit()
         self.choosePlatformBox = QComboBox()
 
-        self.chooseGameTextbox.setText('rocket league')
-
         # Modify and add widget functionality here
 
         self.welcomeTitle.setFont(self.mainTitleFont)
+        self.welcomeTitle.setStyleSheet(self.titleColor)
         self.chooseGameLabel.setFont(self.subTitleFont)
+        self.chooseGameLabel.setStyleSheet(self.titleColor)
         self.choosePlatformLabel.setFont(self.subTitleFont)
+        self.choosePlatformLabel.setStyleSheet(self.titleColor)
         self.choosePlatformBox.addItems(self.PLATFORMS)
 
-        self.searchButton.clicked.connect(self.printResults)
+        self.searchButton.clicked.connect(self.resultsToGUI_IO)
         self.clearTextboxButton.clicked.connect(self.clearTextbox)
+
+        self.savedSearchesButton.disconnect()
 
         # Call layout methods here
         self.labelLayout()
@@ -85,25 +123,12 @@ class Program(QWidget):
 
     # Functionality Methods
 
-    def printResults(self): # TODO just a test method..
-
-        try:
-            gameChoice = self.chooseGameTextbox.text()
-            platFormChoice = self.choosePlatformBox.currentText()
-
-            if (platFormChoice == self.PLATFORMS[0]): #TODO in backend, split game choice, if it's an empty list raise an error
-                raise ValueError
-        
-        except ValueError:
-            # display warning message in window
-            print('Error.. No platform selected')
-        
-        else:
-            GUI_IO.sendToBackend(gameChoice, platFormChoice)
-            self.chooseGameTextbox.clear()
-
     def clearTextbox(self):
         self.chooseGameTextbox.clear()
+
+    def statusBarHandling(self, message= None):
+
+        pass
 
     # Layout Methods
 
@@ -168,24 +193,52 @@ class Program(QWidget):
         self.bottomVBox = QVBoxLayout()
         self.bottomVBox.addStretch()
 
-    def center(self): # Centers window on screen
+    # Sends choices to GUI_IO 
 
-        windowFrame = self.frameGeometry()
-        centerOfMonitor = Qw.QDesktopWidget().availableGeometry().center()
+    def resultsToGUI_IO(self):
 
-        windowFrame.moveCenter(centerOfMonitor)
-        self.move(windowFrame.topLeft())
+        try:
+            gameChoice = self.chooseGameTextbox.text()
+            platFormChoice = self.choosePlatformBox.currentText()
 
-# This class will handle all input and output for the GUI
-class GUI_IO:
-    
-    def sendToBackend(game, platform):
+            if (platFormChoice == self.PLATFORMS[0]):
+                raise ValueError
         
-        backend.BACKEND_IO.inputFromGUI(game, platform)
+        except ValueError:
+            # display warning message in window
+            warningMessages(warning= 'invalidPlatform')
+        
+        else:
+            GUI_IO.sendToBackend(gameChoice, platFormChoice)
+            self.chooseGameTextbox.clear()
+
+# displays error messages
+
+def warningMessages(warning= None):
+
+    oopsMessages = ['Oops!', 'Whoops!', 'Uh-Oh!', 'Well..', 'Hmm..']
+    randNum = random.randint(0, len(oopsMessages) - 1)
+    randomMessage = (oopsMessages[randNum])
+
+    platformWarningBox = QMessageBox()
+    platformWarningBox.setIcon(QMessageBox.Warning)
+    platformWarningBox.setText('{} It looks like you forgot to select a platfom!' .format(randomMessage))
+    platformWarningBox.setStandardButtons(QMessageBox.Retry)
+
+    gameWarningBox = QMessageBox()
+    gameWarningBox.setIcon(QMessageBox.Warning)
+    gameWarningBox.setText('{} We couldn\'t gather any results\
+ for that game.' .format(randomMessage))
+
+    if (warning == 'invalidGame'):
+        gameWarningBox.exec_()
+
+    if (warning == 'invalidPlatform'):
+        platformWarningBox.exec_()
 
 def main():
-    app = Qw.QApplication(sys.argv)
-    mainProgram = Program()
+    app = QApplication(sys.argv)
+    mainProgram = Frame()
     sys.exit(app.exec_())
 
 if __name__ == '__main__':

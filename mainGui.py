@@ -79,6 +79,7 @@ class Program(QWidget):
         mainScreenLayout.addLayout(self.gameTextboxHox)
         mainScreenLayout.addLayout(self.choosePlatformHbox)
         mainScreenLayout.addLayout(self.platformSelectorHbox)
+        mainScreenLayout.addWidget(self.testButton)
         mainScreenLayout.addLayout(self.middleVBox)
         mainScreenLayout.addLayout(self.bottomVBox)
         mainScreenLayout.addLayout(self.searchAndClearHbox)
@@ -96,6 +97,7 @@ class Program(QWidget):
         self.searchButton = QPushButton('Search')
         self.savedSearchesButton = QPushButton('Coming Soon\nSaved Searches')
         self.clearTextboxButton = QPushButton('Clear')
+        self.testButton = QPushButton('Switch Layout')
 
         self.chooseGameTextbox = QLineEdit()
         self.choosePlatformBox = QComboBox()
@@ -113,6 +115,7 @@ class Program(QWidget):
 
         self.searchButton.clicked.connect(self.resultsToGUI_IO)
         self.clearTextboxButton.clicked.connect(self.clearTextbox)
+        self.testButton.clicked.connect(self.switchLayoutTest)
 
         self.savedSearchesButton.disconnect()
 
@@ -122,6 +125,9 @@ class Program(QWidget):
         self.extraVBoxes()
 
     # Functionality Methods
+
+    def switchLayoutTest(self):
+        print('Switching Layout')
 
     def clearTextbox(self):
         self.chooseGameTextbox.clear()

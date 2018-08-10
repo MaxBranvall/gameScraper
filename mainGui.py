@@ -11,14 +11,17 @@ from PyQt5.QtGui import QFont
 
 # This class will handle all input and output for the GUI
 class GUI_IO:
-    
+
     def sendToBackend(game, platform):
         
         backend.BACKEND_IO.inputFromGUI(game, platform)
 
-    def fromBackend(*args):
+    def fromBackend(title, price):
 
-        Program.statusBarHandling(message= '')
+        gameTitle = title
+        gamePrice = price
+
+        print(gameTitle, gamePrice)
 
 # The frame and main window.
 class Frame(QMainWindow):
@@ -61,11 +64,7 @@ class Program(QWidget):
 
         super().__init__()
 
-        # self.setStyleSheet('background: grey')
-
-        # self.setStyleSheet("{background-image: url(Images_and_HTML/bg.jpg)}")
-
-        self.titleColor = 'color: #d3d3d3'
+        self.mainFontColor = 'color: #d3d3d3' # Light grey font color
 
         self.mainTitleFont = QFont('Sans Serif', 40, 30) # Font Name, Size, Weight, Italics
         self.subTitleFont = QFont('Sans Serif', 30, 10)
@@ -104,12 +103,13 @@ class Program(QWidget):
         # Modify and add widget functionality here
 
         self.welcomeTitle.setFont(self.mainTitleFont)
-        self.welcomeTitle.setStyleSheet(self.titleColor)
         self.chooseGameLabel.setFont(self.subTitleFont)
-        self.chooseGameLabel.setStyleSheet(self.titleColor)
         self.choosePlatformLabel.setFont(self.subTitleFont)
-        self.choosePlatformLabel.setStyleSheet(self.titleColor)
         self.choosePlatformBox.addItems(self.PLATFORMS)
+
+        self.welcomeTitle.setStyleSheet(self.mainFontColor)
+        self.chooseGameLabel.setStyleSheet(self.mainFontColor)
+        self.choosePlatformLabel.setStyleSheet(self.mainFontColor)
 
         self.searchButton.clicked.connect(self.resultsToGUI_IO)
         self.clearTextboxButton.clicked.connect(self.clearTextbox)
@@ -211,6 +211,19 @@ class Program(QWidget):
         else:
             GUI_IO.sendToBackend(gameChoice, platFormChoice)
             self.chooseGameTextbox.clear()
+
+class PriceandTitleScreen(QWidget):
+
+    def __init__(self):
+        
+        super().__init__()
+
+        self.initUI()
+        self.show()
+
+    def initUI(self):
+        
+        self.gameTitleLabel = QLabel()
 
 # displays error messages
 

@@ -10,20 +10,18 @@ class BACKEND_IO:
         platformChoice = platform
         Modification.gameAndPlatformModification(gameChoice, platformChoice)
 
-    def inputFromScraper(message):
+    def inputFromScraper(gameTitle, gamePrice):
 
-        statusMessage = message
-
-        sendToGui(mess= statusMessage)
+        BACKEND_IO.sendToGui(title= gameTitle, price= gamePrice)
+        
 
     def sendToScraper(game, platform):
 
         webScraper.SCRAPER_IO.inputFromBackend(game, platform)
 
-    def sendToGui(**kwargs):
+    def sendToGui(title, price):
 
-        print(mess)
-        # mainGui.GUI_IO.fromBackend()
+        mainGui.GUI_IO.fromBackend(title, price)
 
 class Modification:
 

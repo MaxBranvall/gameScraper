@@ -18,10 +18,10 @@ class SCRAPER_IO:
 
         Scraping.getURL(game, platform)
 
-    def sendToBackend():
+    def sendToBackend(gameTitle, gamePrice):
 
-        
-        Scraping.getURL.URL
+        backend.BACKEND_IO.inputFromScraper(gameTitle, gamePrice)
+
 
 class Scraping:
 
@@ -30,33 +30,41 @@ class Scraping:
         URL = (url[0]+game+'+'+platform)
         print(URL)
 
-        getPage = requests.get(URL, headers= header)       
-        rawPage = html.fromstring(getPage.content)
+        getBingPage = requests.get(URL, headers= header)       
+        rawBingPage = html.fromstring(getBingPage.content)
 
-        amazonLink = rawPage.xpath('//*[@id="b_results"]/li[2]/h2/a/@href')
+        amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[2]/h2/a/@href')
 
-        while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
+        print(amazonLink)
 
-            n = 0
-            n += 1
+        if ('amazon' in amazonLink[0]):
 
-            amazonLink = rawPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(n))
+            getAmazonPage = requests.get(amazonLink[0], headers= header)
+            getAmazonContent = html.fromstring(getAmazonPage.content)
 
-            if 'amazon' in amazonLink[0]:
+            Scraping.scrapeContents(getAmazonContent)
+        else:
 
-                print(amazonLink)
-                print('in link')
+            while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
 
-                getAmazonPage = requests.get(amazonLink[0], headers= header)
-                getAmazonContent = html.fromstring(getAmazonPage.content)
+                n = 0
+                n += 1
 
-                Scraping.scrapeContents(getAmazonContent)
-        
-        # print('getAmazon')
-        getAmazonPage = requests.get(amazonLink[0], headers= header)
-        getAmazonContent = html.fromstring(getAmazonPage.content)
+                amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(n))
 
-        Scraping.scrapeContents(getAmazonContent)
+                if 'amazon' in amazonLink[0]:
+
+                    print(amazonLink)
+                    print('in link')
+
+                    getAmazonPage = requests.get(amazonLink[0], headers= header)
+                    getAmazonContent = html.fromstring(getAmazonPage.content)
+
+                    Scraping.scrapeContents(getAmazonContent)
+
+                else:
+
+                    print('Not available')
 
     def scrapeContents(newUrl):
 
@@ -71,16 +79,36 @@ class Scraping:
 
             return gameTitle
 
+        title = getTitle()
+
         try:
             price1 = amazonPage.xpath('//*[@id="priceblock_ourprice"]/span[2]/text()')
             price2 = amazonPage.xpath('//*[@id="priceblock_ourprice"]/span[3]/text()')
 
-            if (IndexError): # this will happen if amazon pulls up a used sale first
-                price1 = amazonPage.xpath('//*[@id="priceblock_usedprice"]/span[2]/text()')
-                price2 = amazonPage.xpath('//*[@id="priceblock_usedprice"]/span[3]/text()')
+            price = ('${}.{}' .format(price1[0], price2[0]))
+
+        except (IndexError):
+            price1 = amazonPage.xpath('//*[@id="digital-button-price"]/span[2]/text()')
+            price2 = amazonPage.xpath('//*[@id="digital-button-price"]/span[2]/text()')
+
+            try:
+                price = ('${}.{}' .format(price1[0], price2[0]))
+                SCRAPER_IO.sendToBackend(title, price)
+
+            except IndexError:
+                print(title)
+                print(price1, price2)
+
+        else:
+
+            SCRAPER_IO.sendToBackend(title, price)
+
         
         finally:
-            print(getTitle())
-            print('$'+price1[0]+'.'+price2[0])
+            # print(getTitle())
+            # print('$'+price1[0]+'.'+price2[0])
+            pass
+
+            
 
         

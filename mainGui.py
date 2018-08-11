@@ -21,7 +21,11 @@ class GUI_IO:
         gameTitle = title
         gamePrice = price
 
-        PriceandTitleScreen.fromGUI_IO(PriceandTitleScreen, gameTitle, gamePrice)
+        print(gameTitle, gamePrice)
+        print(type(gameTitle))
+
+        pat = PriceandTitleScreen()
+
 
 # The frame and main window.
 class Frame(QMainWindow):
@@ -318,9 +322,7 @@ class PriceandTitleScreen(QWidget):
 
     def fromGUI_IO(self, *args):
         
-        self.gameTitle = args[0]
-        self.gamePrice = args[1]
-        self.setLabels(self.gameTitle, self.gamePrice)
+        print(args)
 
 
         # try:
@@ -334,10 +336,12 @@ class PriceandTitleScreen(QWidget):
         #     print('Title and price set')
         #     self.setLabels()
 
-    def setLabels(self, title, price):
+    def setLabels(title, price):
 
-        self.gameTitleLabel.setText(title)
-        self.gamePriceLabel.setText(price)
+        gameTitleLabel.setText(title)
+        gamePriceLabel.setText(price)
+
+        print(title, price)
 
 
 # displays error messages

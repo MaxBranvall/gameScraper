@@ -26,15 +26,25 @@ class GUI_IO:
 # The frame and main window.
 class Frame(QMainWindow):
 
-    def __init__(self):
+    def __init__(self, screen= 1):
         
         super().__init__()
         
-        self.mainWindow = Program()
+        self.mainWindow = Program
+        self.secondWindow = PriceandTitleScreen
         # other windows will go here
-        self.setCentralWidget(self.mainWindow)
+        if (screen == 1):
+            self.setCentralWidget(self.mainWindow())
+
+        elif (screen == 2):
+            self.setCentralWidget(self.secondWindow())
 
         self.initUI()
+
+    def changeScreen(self):
+
+        print('switch layout')
+        self.__init__()
 
     def initUI(self):
 
@@ -127,7 +137,10 @@ class Program(QWidget):
     # Functionality Methods
 
     def switchLayoutTest(self):
-        print('Switching Layout')
+        
+        f = Frame(screen= 2)
+        f.changeScreen()
+
 
     def clearTextbox(self):
         self.chooseGameTextbox.clear()
@@ -224,12 +237,78 @@ class PriceandTitleScreen(QWidget):
         
         super().__init__()
 
+        self.mainFontColor = 'color: #d3d3d3' # Light grey font color
+
+        self.mainTitleFont = QFont('Sans Serif', 40, 30) # Font Name, Size, Weight, Italics
+        self.subTitleFont = QFont('Sans Serif', 30, 10)
+
         self.initUI()
         self.show()
 
+        mainScreenLayout = QVBoxLayout()
+        mainScreenLayout.addLayout(self.gameTitleHbox)
+        mainScreenLayout.addLayout(self.listPriceHbox)
+        mainScreenLayout.addLayout(self.gamePriceHbox)
+        mainScreenLayout.addLayout(self.bottomVBox)
+
+        self.setLayout(mainScreenLayout)
+
     def initUI(self):
         
-        self.gameTitleLabel = QLabel()
+        # Create widgets here
+        self.gameTitleLabel = QLabel('Game Title')
+        self.listPriceLabel = QLabel('List Price:')
+        self.gamePriceLabel = QLabel('$29.99')
+
+        # Modify widgets here
+        self.gameTitleLabel.setFont(self.mainTitleFont)
+        self.listPriceLabel.setFont(self.subTitleFont)
+        self.gamePriceLabel.setFont(self.subTitleFont)
+
+        self.gameTitleLabel.setStyleSheet(self.mainFontColor)
+        self.listPriceLabel.setStyleSheet(self.mainFontColor)
+        self.gamePriceLabel.setStyleSheet(self.mainFontColor)
+
+        # Call layout methods here
+        self.labelLayout()
+        self.extraVBoxes()
+
+    def labelLayout(self):
+
+        gameTitleForm = QFormLayout()
+        gameTitleForm.addRow(self.gameTitleLabel)
+
+        self.gameTitleHbox = QHBoxLayout()
+        self.gameTitleHbox.addStretch()
+        self.gameTitleHbox.addLayout(gameTitleForm)
+        self.gameTitleHbox.addStretch()
+
+        listPriceForm = QFormLayout()
+        listPriceForm.addRow(self.listPriceLabel)
+
+        self.listPriceHbox = QHBoxLayout()
+        self.listPriceHbox.addStretch()
+        self.listPriceHbox.addLayout(listPriceForm)
+        self.listPriceHbox.addStretch()
+
+        gamePriceForm = QFormLayout()
+        gamePriceForm.addRow(self.gamePriceLabel)
+
+        self.gamePriceHbox = QHBoxLayout()
+        self.gamePriceHbox.addStretch()
+        self.gamePriceHbox.addLayout(gamePriceForm)
+        self.gamePriceHbox.addStretch()
+
+    def extraVBoxes(self):
+
+        self.topVBox = QVBoxLayout()
+        self.topVBox.addStretch()
+
+        self.middleVBox = QVBoxLayout()
+        self.middleVBox.addStretch()
+
+        self.bottomVBox = QVBoxLayout()
+        self.bottomVBox.addStretch()
 
 # displays error messages
 

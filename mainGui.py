@@ -6,7 +6,7 @@
 import sys, backend, random
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QPushButton,
                             QLabel, QLineEdit, QComboBox, QMainWindow, 
-                            QWidget, QApplication, QMessageBox, QDesktopWidget)
+                            QWidget, QApplication, QMessageBox, QDesktopWidget, QStackedWidget, QStackedLayout)
 from PyQt5.QtGui import QFont
 
 # This class will handle all input and output for the GUI
@@ -21,7 +21,7 @@ class GUI_IO:
         gameTitle = title
         gamePrice = price
 
-        print(gameTitle, gamePrice)
+        PriceandTitleScreen.fromGUI_IO(PriceandTitleScreen, gameTitle, gamePrice)
 
 # The frame and main window.
 class Frame(QMainWindow):
@@ -32,6 +32,7 @@ class Frame(QMainWindow):
         
         self.mainWindow = Program
         self.secondWindow = PriceandTitleScreen
+
         # other windows will go here
         if (screen == 1):
             self.setCentralWidget(self.mainWindow())
@@ -44,6 +45,7 @@ class Frame(QMainWindow):
     def changeScreen(self):
 
         print('switch layout')
+
         self.__init__()
 
     def initUI(self):
@@ -141,6 +143,10 @@ class Program(QWidget):
         f = Frame(screen= 2)
         f.changeScreen()
 
+        self.closeWindow()
+
+    def closeWindow(self):
+        self.close()
 
     def clearTextbox(self):
         self.chooseGameTextbox.clear()
@@ -256,9 +262,9 @@ class PriceandTitleScreen(QWidget):
     def initUI(self):
         
         # Create widgets here
-        self.gameTitleLabel = QLabel('Game Title')
+        self.gameTitleLabel = QLabel('Title')
         self.listPriceLabel = QLabel('List Price:')
-        self.gamePriceLabel = QLabel('$29.99')
+        self.gamePriceLabel = QLabel('Price')
 
         # Modify widgets here
         self.gameTitleLabel.setFont(self.mainTitleFont)
@@ -309,6 +315,30 @@ class PriceandTitleScreen(QWidget):
 
         self.bottomVBox = QVBoxLayout()
         self.bottomVBox.addStretch()
+
+    def fromGUI_IO(self, *args):
+        
+        self.gameTitle = args[0]
+        self.gamePrice = args[1]
+        self.setLabels(self.gameTitle, self.gamePrice)
+
+
+        # try:
+        #     self.gameTitle = args[0]
+        #     self.gamePrice = args[1]
+        #     self.platform = args[2]
+        
+        # except IndexError:
+        #     self.gameTitle = args[0]
+        #     self.gamePrice = args[1]
+        #     print('Title and price set')
+        #     self.setLabels()
+
+    def setLabels(self, title, price):
+
+        self.gameTitleLabel.setText(title)
+        self.gamePriceLabel.setText(price)
+
 
 # displays error messages
 

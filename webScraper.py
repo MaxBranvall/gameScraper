@@ -36,35 +36,41 @@ class Scraping:
         amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[2]/h2/a/@href')
 
         print(amazonLink)
+        try:
+            if ('amazon' in amazonLink[0]):
 
-        if ('amazon' in amazonLink[0]):
+                getAmazonPage = requests.get(amazonLink[0], headers= header)
+                getAmazonContent = html.fromstring(getAmazonPage.content)
 
-            getAmazonPage = requests.get(amazonLink[0], headers= header)
-            getAmazonContent = html.fromstring(getAmazonPage.content)
+                Scraping.scrapeContents(getAmazonContent)
+            elif ('amazon' not in amazonLink[0]):
 
-            Scraping.scrapeContents(getAmazonContent)
-        else:
+                while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
 
-            while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
+                    n = 0
+                    n += 1
 
-                n = 0
-                n += 1
+                    amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(n))
 
-                amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(n))
+                    try:
+                        if 'amazon' in amazonLink[0]:
 
-                if 'amazon' in amazonLink[0]:
+                            print(amazonLink)
+                            print('in link')
 
-                    print(amazonLink)
-                    print('in link')
+                            getAmazonPage = requests.get(amazonLink[0], headers= header)
+                            getAmazonContent = html.fromstring(getAmazonPage.content)
 
-                    getAmazonPage = requests.get(amazonLink[0], headers= header)
-                    getAmazonContent = html.fromstring(getAmazonPage.content)
+                            Scraping.scrapeContents(getAmazonContent)
 
-                    Scraping.scrapeContents(getAmazonContent)
+                        else:
 
-                else:
+                            print('Not available')
+                    except IndexError:
+                        print('Index Error, try again.')
 
-                    print('Not available')
+        except IndexError:
+            print('try again')
 
     def scrapeContents(newUrl):
 

@@ -321,24 +321,22 @@ class PriceandTitleScreen(QWidget):
 
     def fromGUI_IO(self, *args):
         
-        print(args)
-
-
-        # try:
-        #     self.gameTitle = args[0]
-        #     self.gamePrice = args[1]
-        #     self.platform = args[2]
+        try:
+            title = args[0]
+            price = args[1]
+            platform = args[2]
         
-        # except IndexError:
-        #     self.gameTitle = args[0]
-        #     self.gamePrice = args[1]
-        #     print('Title and price set')
-        #     self.setLabels()
+        except IndexError:
+            title = args[0]
+            price = args[1]
 
-    def setLabels(title, price):
+        finally:
+            self.setLabels(title, price)
+            
+    def setLabels(self, title, price):
 
-        gameTitleLabel.setText(title)
-        gamePriceLabel.setText(price)
+        self.gameTitleLabel.setText(title)
+        self.gamePriceLabel.setText(price)
 
         print(title, price)
 

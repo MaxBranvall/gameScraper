@@ -12,8 +12,6 @@ class BACKEND_IO:
 
     def inputFromScraper(gameTitle, gamePrice):
 
-        print(gameTitle, gamePrice)
-
         BACKEND_IO.sendToGui(title= gameTitle, price= gamePrice)
         
 
@@ -22,8 +20,6 @@ class BACKEND_IO:
         webScraper.SCRAPER_IO.inputFromBackend(game, platform)
 
     def sendToGui(title, price):
-
-        print(title, price)
 
         mainGui.GUI_IO.fromBackend(title, price)
 

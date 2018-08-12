@@ -21,10 +21,9 @@ class GUI_IO:
         gameTitle = title
         gamePrice = price
 
-        print(gameTitle, gamePrice)
-        print(type(gameTitle))
+        foo = PriceandTitleScreen()
 
-        pat = PriceandTitleScreen()
+        foo.fromGUI_IO(gameTitle, gamePrice)
 
 
 # The frame and main window.

@@ -82,14 +82,21 @@ class Scraping:
         title = getTitle()
 
         try:
+            print('amazon price') 
             price1 = amazonPage.xpath('//*[@id="priceblock_ourprice"]/span[2]/text()')
             price2 = amazonPage.xpath('//*[@id="priceblock_ourprice"]/span[3]/text()')
 
             price = ('${}.{}' .format(price1[0], price2[0]))
 
         except (IndexError):
+            print('digital price')
             price1 = amazonPage.xpath('//*[@id="digital-button-price"]/span[2]/text()')
             price2 = amazonPage.xpath('//*[@id="digital-button-price"]/span[2]/text()')
+
+            if (price1 == []):
+                print('used price')
+                price1 = amazonPage.xpath('//*[@id="priceblock_usedprice"]/span[2]/text()')
+                price2 = amazonPage.xpath('//*[@id="priceblock_usedprice"]/span[3]/text()')
 
             try:
                 price = ('${}.{}' .format(price1[0], price2[0]))
@@ -107,8 +114,4 @@ class Scraping:
         finally:
             # print(getTitle())
             # print('$'+price1[0]+'.'+price2[0])
-            pass
-
-            
-
-        
+            pass   

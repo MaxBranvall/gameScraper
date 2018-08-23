@@ -66,6 +66,8 @@ class Scraping:
                         else:
 
                             print('Not available')
+                            break
+                            
                     except IndexError:
                         print('Index Error, try again.')
 

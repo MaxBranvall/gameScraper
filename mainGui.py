@@ -53,6 +53,7 @@ class Frame(QMainWindow):
 
     def initUI(self):
 
+        # self.setStyleSheet('{background : black}')
         self.setStyleSheet("QMainWindow {background-image: url(Images_and_HTML/carbonBG.jpg)}")
 
         self.resize(600, 400)
@@ -149,7 +150,8 @@ class Program(QWidget):
         self.closeWindow()
 
     def closeWindow(self):
-        self.close()
+        # self.close()
+        pass
 
     def clearTextbox(self):
         self.chooseGameTextbox.clear()
@@ -239,6 +241,7 @@ class Program(QWidget):
         else:
             GUI_IO.sendToBackend(gameChoice, platFormChoice)
             self.chooseGameTextbox.clear()
+            self.switchLayoutTest()
 
 class PriceandTitleScreen(QWidget):
 
@@ -264,10 +267,13 @@ class PriceandTitleScreen(QWidget):
 
     def initUI(self):
         
+        print('init')
+
         # Create widgets here
         self.gameTitleLabel = QLabel('Title')
         self.listPriceLabel = QLabel('List Price:')
         self.gamePriceLabel = QLabel('Price')
+        self.testButton = QPushButton('change text', self)
 
         # Modify widgets here
         self.gameTitleLabel.setFont(self.mainTitleFont)
@@ -278,9 +284,15 @@ class PriceandTitleScreen(QWidget):
         self.listPriceLabel.setStyleSheet(self.mainFontColor)
         self.gamePriceLabel.setStyleSheet(self.mainFontColor)
 
+        self.testButton.clicked.connect(self.changeText)
+
         # Call layout methods here
         self.labelLayout()
         self.extraVBoxes()
+
+    def changeText(self):
+        print('change')
+        self.gameTitleLabel.setText('hello')
 
     def labelLayout(self):
 

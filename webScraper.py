@@ -52,19 +52,24 @@ class Scraping:
 
                 amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(n))
 
-                if 'amazon' in amazonLink[0]:
+                try:
+                    if 'amazon' in amazonLink[0]:
 
-                    print(amazonLink)
-                    print('in link')
+                        print(amazonLink)
+                        print('in link')
 
-                    getAmazonPage = requests.get(amazonLink[0], headers= header)
-                    getAmazonContent = html.fromstring(getAmazonPage.content)
+                        getAmazonPage = requests.get(amazonLink[0], headers= header)
+                        getAmazonContent = html.fromstring(getAmazonPage.content)
 
-                    Scraping.scrapeContents(getAmazonContent)
+                        Scraping.scrapeContents(getAmazonContent)
 
-                else:
+                    else:
 
-                    print('Not available')
+                        print('Not available')
+
+                except IndexError: #TODO this prints if the game isn't on amazon
+                    print('empty amazon list')
+                    break
 
     def scrapeContents(newUrl):
 

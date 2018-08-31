@@ -11,7 +11,6 @@ header = {
     'USER-AGENT': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
 }
 
-
 class SCRAPER_IO:
 
     def inputFromBackend(game, platform):
@@ -37,22 +36,26 @@ class Scraping:
 
         print(amazonLink)
 
-        if ('amazon' in amazonLink[0]):
+        try:
+            if ('amazon' in amazonLink[0]):
 
-            getAmazonPage = requests.get(amazonLink[0], headers= header)
-            getAmazonContent = html.fromstring(getAmazonPage.content)
+                getAmazonPage = requests.get(amazonLink[0], headers= header)
+                getAmazonContent = html.fromstring(getAmazonPage.content)
 
-            Scraping.scrapeContents(getAmazonContent)
-        else:
-
-            while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
+                Scraping.scrapeContents(getAmazonContent)
+            else:
 
                 n = 0
-                n += 1
 
-                amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(n))
+                while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
 
-                try:
+                    n += 1
+                    print(n)                    
+
+                    amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(n))
+
+                    print(amazonLink)
+
                     if 'amazon' in amazonLink[0]:
 
                         print(amazonLink)
@@ -63,13 +66,10 @@ class Scraping:
 
                         Scraping.scrapeContents(getAmazonContent)
 
-                    else:
-
-                        print('Not available')
-
-                except IndexError: #TODO this prints if the game isn't on amazon
-                    print('empty amazon list')
-                    break
+        except IndexError:
+            print('empty list')
+            
+                        
 
     def scrapeContents(newUrl):
 

@@ -1,7 +1,9 @@
 # GUI of the program. User inputs will be sent to backend.py to be handled.
 # Prices, titles, etc. will be recieved from backend.py ready to be displayed.
 
-#TODO WARNING light grey/default background is bugged and doesn't clear textbox and combo box properly..
+#BUG light grey/default background is bugged and doesn't clear textbox and combo box properly..
+
+# This is in empty price list branch
 
 import sys, backend, random
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QPushButton,

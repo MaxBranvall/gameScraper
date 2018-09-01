@@ -4,6 +4,7 @@ import requests, urllib, backend
 from lxml import html
 
 #TODO Refactor
+#bug04
 
 url = [
     'https://www.bing.com/search?q=',

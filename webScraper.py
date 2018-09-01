@@ -39,34 +39,38 @@ class Scraping:
         amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[1]/h2/a/@href') # Grabs the first link from the bing results
         print(amazonLink) # prints the first link in a list
 
+        try:
+            if ('amazon' in amazonLink[0]):
 
-        if ('amazon' in amazonLink[0]):
+                Scraping.retrievePage(amazonLink)
 
-            Scraping.retrievePage(amazonLink)
+            else:
 
-        else:
+                while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
 
-            while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
+                    hrefNumber += 1
 
-                hrefNumber += 1
+                    amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(hrefNumber))
 
-                amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(hrefNumber))
+                    try:
+                        if 'amazon' in amazonLink[0]:
 
-                try:
-                    if 'amazon' in amazonLink[0]:
+                            print(amazonLink)
+                            print('in link')
 
-                        print(amazonLink)
-                        print('in link')
+                            Scraping.retrievePage(amazonLink)
 
-                        Scraping.retrievePage(amazonLink)
+                        elif hrefNumber == 10:
+                            print('Not Available')
+                            break
 
-                    elif hrefNumber == 10:
-                        print('Not Available')
+                    except IndexError: #TODO this prints if the game isn't on amazon
+                        print('empty amazon list')
                         break
 
-                except IndexError: #TODO this prints if the game isn't on amazon
-                    print('empty amazon list')
-                    break
+        except IndexError:
+            print(getBingPage)
+            print('Index Error line 43')
 
     def retrievePage(amazonLink):
 

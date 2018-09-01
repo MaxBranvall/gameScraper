@@ -29,6 +29,30 @@ class Scraping:
 
     def getURL(game, platform):
 
+        def parseForLink(amazonLink, hrefNumber):
+
+            while ('amazon' not in amazonLink[0]):
+
+                    hrefNumber += 1
+
+                    amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(hrefNumber))
+
+                    try:
+                        if ('amazon' in amazonLink[0]):
+
+                            print(amazonLink)
+                            print('in link')
+
+                            Scraping.retrievePage(amazonLink)
+
+                        elif hrefNumber == 10:
+                            print('Not Available')
+                            break
+
+                    except IndexError:
+                        print('Empty Amazon List')
+                        break
+
         hrefNumber = 0
 
         URL = (url[0]+game+'+'+platform) # Adds the game and platform to the search link
@@ -46,28 +70,8 @@ class Scraping:
                 Scraping.retrievePage(amazonLink)
 
             else:
-
-                while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
-
-                    hrefNumber += 1
-
-                    amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(hrefNumber))
-
-                    try:
-                        if 'amazon' in amazonLink[0]:
-
-                            print(amazonLink)
-                            print('in link')
-
-                            Scraping.retrievePage(amazonLink)
-
-                        elif hrefNumber == 10:
-                            print('Not Available')
-                            break
-
-                    except IndexError: #TODO this prints if the game isn't on amazon
-                        print('empty amazon list')
-                        break
+                print('parsing')
+                parseForLink(amazonLink, hrefNumber)
 
         except IndexError:
             print(getBingPage)

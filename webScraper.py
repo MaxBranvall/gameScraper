@@ -90,7 +90,7 @@ class Utility:
     priceSpecs = ["priceblock_ourprice", "digital-button-price", "priceblock_usedprice"]
 
     def getPrice(amazonPage, title, n= 0):
-        
+
         price1 = amazonPage.xpath('//*[@id="{}"]/span[2]/text()' .format(Utility.priceSpecs[n]))
         price2 = amazonPage.xpath('//*[@id="{}"]/span[3]/text()' .format(Utility.priceSpecs[n]))
 

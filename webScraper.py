@@ -3,6 +3,8 @@
 import requests, urllib, backend
 from lxml import html
 
+#TODO Refactor
+
 url = [
     'https://www.bing.com/search?q=',
 ]
@@ -26,97 +28,89 @@ class Scraping:
 
     def getURL(game, platform):
 
-        URL = (url[0]+game+'+'+platform)
-        print(URL)
+        hrefNumber = 0
 
-        getBingPage = requests.get(URL, headers= header)       
-        rawBingPage = html.fromstring(getBingPage.content)
+        URL = (url[0]+game+'+'+platform) # Adds the game and platform to the search link
+        print(URL) # Prints the bing search link
 
-        amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[2]/h2/a/@href')
+        getBingPage = requests.get(URL, headers= header) # Retrieves the bing page      
+        rawBingPage = html.fromstring(getBingPage.content) # Prepares the bing page for parsing
 
-        print(amazonLink)
+        amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[1]/h2/a/@href') # Grabs the first link from the bing results
+        print(amazonLink) # prints the first link in a list
 
         try:
             if ('amazon' in amazonLink[0]):
 
-                getAmazonPage = requests.get(amazonLink[0], headers= header)
-                getAmazonContent = html.fromstring(getAmazonPage.content)
+            Scraping.retrievePage(amazonLink)
 
-                Scraping.scrapeContents(getAmazonContent)
-            else:
+        else:
 
-                n = 0
+            while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
 
-                while ('amazon' not in amazonLink[0]): # this will keep searching hrefs until it finds Amazon
+                hrefNumber += 1
 
-                    n += 1
-                    print(n)                    
-
-                    amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(n))
-
-                    print(amazonLink)
+                amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(hrefNumber))
 
                     if 'amazon' in amazonLink[0]:
 
                         print(amazonLink)
                         print('in link')
 
-                        getAmazonPage = requests.get(amazonLink[0], headers= header)
-                        getAmazonContent = html.fromstring(getAmazonPage.content)
+                        Scraping.retrievePage(amazonLink)
 
-                        Scraping.scrapeContents(getAmazonContent)
+                    elif hrefNumber == 10:
+                        print('Not Available')
+                        break
 
-        except IndexError:
-            print('empty list')
-            
-                        
+                except IndexError: #TODO this prints if the game isn't on amazon
+                    print('empty amazon list')
+                    break
 
-    def scrapeContents(newUrl):
-
-        # print('scrape')
-        amazonPage = newUrl
+    def retrievePage(amazonLink):
 
         def getTitle():
 
-            rawTitle = amazonPage.xpath('//*[@id="productTitle"]/text()')
+            rawTitle = amazonContent.xpath('//*[@id="productTitle"]/text()')
             titleSplit = rawTitle[0].split()
             gameTitle = ' '.join(titleSplit)
 
             return gameTitle
 
+        getAmazonPage = requests.get(amazonLink[0], headers= header)
+        amazonContent = html.fromstring(getAmazonPage.content)
+
         title = getTitle()
 
-        try:
-            print('amazon price') 
-            price1 = amazonPage.xpath('//*[@id="priceblock_ourprice"]/span[2]/text()')
-            price2 = amazonPage.xpath('//*[@id="priceblock_ourprice"]/span[3]/text()')
+        Utility.getPrice(amazonContent, title)
 
-            price = ('${}.{}' .format(price1[0], price2[0]))
+class Utility:
 
-        except (IndexError):
-            print('digital price')
-            price1 = amazonPage.xpath('//*[@id="digital-button-price"]/span[2]/text()')
-            price2 = amazonPage.xpath('//*[@id="digital-button-price"]/span[2]/text()')
+    priceSpecs = ["priceblock_ourprice", "digital-button-price", "priceblock_usedprice"]
 
-            if (price1 == []):
-                print('used price')
-                price1 = amazonPage.xpath('//*[@id="priceblock_usedprice"]/span[2]/text()')
-                price2 = amazonPage.xpath('//*[@id="priceblock_usedprice"]/span[3]/text()')
+    def getPrice(amazonPage, title, n= 0):
+        
+        price1 = amazonPage.xpath('//*[@id="{}"]/span[2]/text()' .format(Utility.priceSpecs[n]))
+        price2 = amazonPage.xpath('//*[@id="{}"]/span[3]/text()' .format(Utility.priceSpecs[n]))
 
-            try:
-                price = ('${}.{}' .format(price1[0], price2[0]))
-                SCRAPER_IO.sendToBackend(title, price)
-
-            except IndexError:
-                print(title)
-                print(price1, price2)
+        if price1 == []:
+            n += 1
+            Utility.getPrice(amazonPage, title, n= n)
 
         else:
+            Utility.setPriceandTitle(n, title, price1, price2)
 
-            SCRAPER_IO.sendToBackend(title, price)
+    def setPriceandTitle(n, title, price1, price2):
 
+        if n == 0:
+            print('Amazon Price')
         
-        finally:
-            # print(getTitle())
-            # print('$'+price1[0]+'.'+price2[0])
-            pass   
+        elif n == 1:
+            print('Digital Price')
+
+        else:
+            print('Used Price')
+
+        price = ('${}.{}' .format(price1[0], price2[0]))
+        
+        SCRAPER_IO.sendToBackend(title, price)

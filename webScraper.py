@@ -39,8 +39,8 @@ class Scraping:
         amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[1]/h2/a/@href') # Grabs the first link from the bing results
         print(amazonLink) # prints the first link in a list
 
-        try:
-            if ('amazon' in amazonLink[0]):
+
+        if ('amazon' in amazonLink[0]):
 
             Scraping.retrievePage(amazonLink)
 
@@ -52,6 +52,7 @@ class Scraping:
 
                 amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(hrefNumber))
 
+                try:
                     if 'amazon' in amazonLink[0]:
 
                         print(amazonLink)

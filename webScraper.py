@@ -41,7 +41,6 @@ class Scraping:
                         if ('amazon' in amazonLink[0]):
 
                             print(amazonLink)
-                            print('in link')
 
                             Scraping.retrievePage(amazonLink)
 
@@ -58,7 +57,7 @@ class Scraping:
         URL = (url[0]+game+'+'+platform) # Adds the game and platform to the search link
         print(URL) # Prints the bing search link
 
-        getBingPage = requests.get(URL, headers= header) # Retrieves the bing page      
+        getBingPage = requests.get(URL) # Retrieves the bing page      
         rawBingPage = html.fromstring(getBingPage.content) # Prepares the bing page for parsing
 
         amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[1]/h2/a/@href') # Grabs the first link from the bing results

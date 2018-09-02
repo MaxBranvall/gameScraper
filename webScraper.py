@@ -86,6 +86,7 @@ class Scraping:
 
             return gameTitle
 
+        print('retrieve page')
         getAmazonPage = requests.get(amazonLink[0], headers= header)
         amazonContent = html.fromstring(getAmazonPage.content)
 

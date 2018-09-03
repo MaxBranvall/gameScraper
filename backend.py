@@ -41,7 +41,4 @@ class Modification:
         else:
             gameJoin = '+'.join(gameSplit)
             platformJoin = '+'.join(platformSplit)
-            BACKEND_IO.sendToScraper(gameJoin, platformJoin)
-
-        
-        
+            BACKEND_IO.sendToScraper(gameJoin, platformJoin)        

@@ -1,13 +1,18 @@
 # GUI of the program. User inputs will be sent to backend.py to be handled.
 # Prices, titles, etc. will be recieved from backend.py ready to be displayed.
 
-#TODO WARNING light grey/default background is bugged and doesn't clear textbox and combo box properly..
+#BUG light grey/default background is bugged and doesn't clear textbox and combo box properly..
+
+# This is in empty price list branch
 
 import sys, backend, random
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QPushButton,
                             QLabel, QLineEdit, QComboBox, QMainWindow, 
                             QWidget, QApplication, QMessageBox, QDesktopWidget, QStackedWidget, QStackedLayout)
 from PyQt5.QtGui import QFont
+
+
+# testtest
 
 # This class will handle all input and output for the GUI
 class GUI_IO:
@@ -284,15 +289,14 @@ class PriceandTitleScreen(QWidget):
         self.listPriceLabel.setStyleSheet(self.mainFontColor)
         self.gamePriceLabel.setStyleSheet(self.mainFontColor)
 
-        self.testButton.clicked.connect(self.changeText)
+        self.testButton.clicked.connect(self.testFunc)
 
         # Call layout methods here
         self.labelLayout()
         self.extraVBoxes()
 
-    def changeText(self):
-        print('change')
-        self.gameTitleLabel.setText('hello')
+    def testFunc(self):
+        print('change text')
 
     def labelLayout(self):
 

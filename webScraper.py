@@ -33,26 +33,28 @@ class Scraping:
 
             while ('amazon' not in amazonLink[0]):
 
-                    hrefNumber += 1
+                hrefNumber += 1
+                print(hrefNumber)
 
-                    amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(hrefNumber))
+                amazonLink = rawBingPage.xpath('//*[@id="b_results"]/li[{}]/h2/a/@href' .format(hrefNumber))
+                print(amazonLink)
 
-                    try:
-                        if ('amazon' in amazonLink[0]):
+                try:
+                    if ('amazon' in amazonLink[0]):
 
-                            print(amazonLink)
+                        print(amazonLink)
 
-                            Scraping.retrievePage(amazonLink)
-
-                        elif hrefNumber == 10:
-                            print('Not Available')
-                            break
-
-                    except IndexError:
-                        print('Empty Amazon List')
+                        Scraping.retrievePage(amazonLink)
                         break
 
-        hrefNumber = 0
+                    elif hrefNumber == 10:
+                        print('Not Available')
+                        break
+
+                except IndexError:
+                    pass
+
+        hrefNumber = 1
 
         URL = (url[0]+game+'+'+platform) # Adds the game and platform to the search link
         print(URL) # Prints the bing search link
@@ -87,6 +89,7 @@ class Scraping:
             return gameTitle
 
         print('retrieve page')
+        print(amazonLink)
         getAmazonPage = requests.get(amazonLink[0], headers= header)
         amazonContent = html.fromstring(getAmazonPage.content)
 

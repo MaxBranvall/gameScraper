@@ -378,7 +378,7 @@ class PriceandTitleScreen(QWidget):
         self.closeFiles(writeToCacheFile)
 
     def closeFiles(self, *args):
-        args[1].close()
+        args[0].close()
 
 # displays error messages
 

@@ -21,7 +21,7 @@ class BACKEND_IO:
 
     def sendToGui(title, price):
 
-        mainGui.GUI_IO.fromBackend(title, price)
+        mainGui.GUI_IO.fromBackend(title= title, price= price)
 
 class Modification:
 

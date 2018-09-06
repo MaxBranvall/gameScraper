@@ -1,11 +1,11 @@
 # GUI of the program. User inputs will be sent to backend.py to be handled.
 # Prices, titles, etc. will be recieved from backend.py ready to be displayed.
 
-#BUG light grey/default background is bugged and doesn't clear textbox and combo box properly..
+# BUG light grey/default background is bugged and doesn't clear textbox and combo box properly..
 
 # This is in empty price list branch
 
-import sys, backend, random
+import sys, backend, random, linecache, Untitled
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QPushButton,
                             QLabel, QLineEdit, QComboBox, QMainWindow, 
                             QWidget, QApplication, QMessageBox, QDesktopWidget, QStackedWidget, QStackedLayout)
@@ -18,45 +18,47 @@ from PyQt5.QtGui import QFont
 class GUI_IO:
 
     def sendToBackend(game, platform):
-        
+
         backend.BACKEND_IO.inputFromGUI(game, platform)
 
-    def fromBackend(title, price):
+    def fromBackend(title=None, price=None):
 
         gameTitle = title
         gamePrice = price
 
-        foo = PriceandTitleScreen()
+        priceAndTitleScreen = PriceandTitleScreen()
 
-        foo.fromGUI_IO(gameTitle, gamePrice)
+        priceAndTitleScreen.fromGUI_IO(gameTitle, gamePrice)
 
 
 # The frame and main window.
-class Frame(QMainWindow):
+class Main(QMainWindow):
 
-    def __init__(self, screen= 1):
+    def __init__(self):
         
         super().__init__()
         
-        self.mainWindow = Program
-        self.secondWindow = PriceandTitleScreen
+        self.windowPreferences()
+        self.showMainMenuScreen()
 
-        # other windows will go here
-        if (screen == 1):
-            self.setCentralWidget(self.mainWindow())
+    def showMainMenuScreen(self):
 
-        elif (screen == 2):
-            self.setCentralWidget(self.secondWindow())
+        self.mainMenuScreen = MainMenuScreen()
+        self.setCentralWidget(self.mainMenuScreen)
 
-        self.initUI()
+        self.mainMenuScreen.testButton.clicked.connect(self.showPriceandTitleScreen)
+        self.mainMenuScreen.searchButton.clicked.connect(self.showPriceandTitleScreen)
+        self.show()
 
-    def changeScreen(self):
+    def showPriceandTitleScreen(self):
 
-        print('switch layout')
+        self.priceAndTitleScreen = PriceandTitleScreen()
+        self.setCentralWidget(self.priceAndTitleScreen)
+        
+        self.priceAndTitleScreen.testButton1.clicked.connect(self.showMainMenuScreen)
+        self.show()
 
-        self.__init__()
-
-    def initUI(self):
+    def windowPreferences(self):
 
         # self.setStyleSheet('{background : black}')
         self.setStyleSheet("QMainWindow {background-image: url(Images_and_HTML/carbonBG.jpg)}")
@@ -68,7 +70,7 @@ class Frame(QMainWindow):
 
         self.show()
 
-    def center(self): # Centers window on screen
+    def center(self):  # Centers window on screen
 
         windowFrame = self.frameGeometry()
         centerOfMonitor = QDesktopWidget().availableGeometry().center()
@@ -77,21 +79,23 @@ class Frame(QMainWindow):
         self.move(windowFrame.topLeft())
 
 # holds all widgets
-class Program(QWidget):
+
+
+class MainMenuScreen(QWidget):
 
     PLATFORMS = ['Selections:', 'Xbox One', 'PlayStation 4', 'PC', 'Nintendo Switch']
 
-    def __init__(self):
+    def __init__(self, layout=1):
 
         super().__init__()
 
-        self.mainFontColor = 'color: #d3d3d3' # Light grey font color
+        self.mainFontColor = 'color: #d3d3d3'  # Light grey font color
 
-        self.mainTitleFont = QFont('Sans Serif', 40, 30) # Font Name, Size, Weight, Italics
+        self.mainTitleFont = QFont('Sans Serif', 40, 30)  # Font Name, Size, Weight, Italics
         self.subTitleFont = QFont('Sans Serif', 30, 10)
 
         self.initUI()
-        self.show()
+        # self.show()
 
         mainScreenLayout = QVBoxLayout()
         mainScreenLayout.addLayout(self.welcomeTitleHbox)
@@ -100,7 +104,6 @@ class Program(QWidget):
         mainScreenLayout.addLayout(self.gameTextboxHox)
         mainScreenLayout.addLayout(self.choosePlatformHbox)
         mainScreenLayout.addLayout(self.platformSelectorHbox)
-        mainScreenLayout.addWidget(self.testButton)
         mainScreenLayout.addLayout(self.middleVBox)
         mainScreenLayout.addLayout(self.bottomVBox)
         mainScreenLayout.addLayout(self.searchAndClearHbox)
@@ -118,7 +121,7 @@ class Program(QWidget):
         self.searchButton = QPushButton('Search')
         self.savedSearchesButton = QPushButton('Coming Soon\nSaved Searches')
         self.clearTextboxButton = QPushButton('Clear')
-        self.testButton = QPushButton('Switch Layout')
+        self.testButton = QPushButton('Switch Layout', self)
 
         self.chooseGameTextbox = QLineEdit()
         self.choosePlatformBox = QComboBox()
@@ -136,9 +139,11 @@ class Program(QWidget):
 
         self.searchButton.clicked.connect(self.resultsToGUI_IO)
         self.clearTextboxButton.clicked.connect(self.clearTextbox)
-        self.testButton.clicked.connect(self.switchLayoutTest)
 
-        self.savedSearchesButton.disconnect()
+        self.testButton.move(10, 10)
+        self.testButton.resize(self.testButton.sizeHint())
+
+        # self.savedSearchesButton.disconnect()
 
         # Call layout methods here
         self.labelLayout()
@@ -147,21 +152,21 @@ class Program(QWidget):
 
     # Functionality Methods
 
+    def changeText(self):
+        print('button clicked')
+        # self.welcomeTitle.setText('Changed')
+
     def switchLayoutTest(self):
-        
-        f = Frame(screen= 2)
-        f.changeScreen()
-
-        self.closeWindow()
-
-    def closeWindow(self):
-        # self.close()
         pass
+
+    # def closeWindow(self):
+    #     # self.close()
+    #     pass
 
     def clearTextbox(self):
         self.chooseGameTextbox.clear()
 
-    def statusBarHandling(self, message= None):
+    def statusBarHandling(self, message=None):
 
         pass
 
@@ -226,9 +231,7 @@ class Program(QWidget):
         self.middleVBox.addStretch()
 
         self.bottomVBox = QVBoxLayout()
-        self.bottomVBox.addStretch()
-
-    # Sends choices to GUI_IO 
+        self.bottomVBox.addStretch()    # Sends choices to GUI_IO
 
     def resultsToGUI_IO(self):
 
@@ -241,26 +244,30 @@ class Program(QWidget):
         
         except ValueError:
             # display warning message in window
-            warningMessages(warning= 'invalidPlatform')
+            warningMessages(warning='invalidPlatform')
         
         else:
             GUI_IO.sendToBackend(gameChoice, platFormChoice)
             self.chooseGameTextbox.clear()
             self.switchLayoutTest()
 
+
 class PriceandTitleScreen(QWidget):
 
+    cacheFile = 'gameCache.txt'
+
     def __init__(self):
-        
+
         super().__init__()
 
-        self.mainFontColor = 'color: #d3d3d3' # Light grey font color
+        self.mainFontColor = 'color: #d3d3d3'  # Light grey font color
 
-        self.mainTitleFont = QFont('Sans Serif', 40, 30) # Font Name, Size, Weight, Italics
+        self.mainTitleFont = QFont('Sans Serif', 40, 30)  # Font Name, Size, Weight, Italics
         self.subTitleFont = QFont('Sans Serif', 30, 10)
 
+        # self.setLabels()
         self.initUI()
-        self.show()
+        # self.show()
 
         mainScreenLayout = QVBoxLayout()
         mainScreenLayout.addLayout(self.gameTitleHbox)
@@ -271,14 +278,15 @@ class PriceandTitleScreen(QWidget):
         self.setLayout(mainScreenLayout)
 
     def initUI(self):
-        
-        print('init')
+
+        cacheLine1 = linecache.getline(self.cacheFile, 1)
 
         # Create widgets here
-        self.gameTitleLabel = QLabel('Title')
+        self.gameTitleLabel = QLabel(cacheLine1)
         self.listPriceLabel = QLabel('List Price:')
         self.gamePriceLabel = QLabel('Price')
-        self.testButton = QPushButton('change text', self)
+        self.testButton = QPushButton('change text')
+        self.testButton1 = QPushButton('change layout', self)
 
         # Modify widgets here
         self.gameTitleLabel.setFont(self.mainTitleFont)
@@ -289,19 +297,20 @@ class PriceandTitleScreen(QWidget):
         self.listPriceLabel.setStyleSheet(self.mainFontColor)
         self.gamePriceLabel.setStyleSheet(self.mainFontColor)
 
-        self.testButton.clicked.connect(self.testFunc)
+        self.testButton1.resize(self.testButton1.sizeHint())
+        self.testButton1.move(10, 10)
+
+        # self.testButton.clicked.connect(self.testFunc)
 
         # Call layout methods here
         self.labelLayout()
         self.extraVBoxes()
 
-    def testFunc(self):
-        print('change text')
-
     def labelLayout(self):
 
         gameTitleForm = QFormLayout()
         gameTitleForm.addRow(self.gameTitleLabel)
+        gameTitleForm.addRow(self.testButton)
 
         self.gameTitleHbox = QHBoxLayout()
         self.gameTitleHbox.addStretch()
@@ -348,18 +357,33 @@ class PriceandTitleScreen(QWidget):
 
         finally:
             self.setLabels(title, price)
+
+    def redirect(self):
+        pass
             
-    def setLabels(self, title, price):
+    def setLabels(self, *args):
 
-        self.gameTitleLabel.setText(title)
-        self.gamePriceLabel.setText(price)
+        gameTitle = args[0]
+        gamePrice = args[1]
 
-        print(title, price)
+        writeToCacheFile = open(self.cacheFile, 'w')
 
+        writeToCacheFile.write('{}\n{}' .format(gameTitle, gamePrice))
+
+        cacheLine1 = linecache.getline(self.cacheFile, 1)
+
+        print(gameTitle, gamePrice)
+
+        # self.initUI(cacheLine1)
+        self.closeFiles(writeToCacheFile)
+
+    def closeFiles(self, *args):
+        args[1].close()
 
 # displays error messages
 
-def warningMessages(warning= None):
+
+def warningMessages(warning=None):
 
     oopsMessages = ['Oops!', 'Whoops!', 'Uh-Oh!', 'Well..', 'Hmm..']
     randNum = random.randint(0, len(oopsMessages) - 1)
@@ -381,9 +405,10 @@ def warningMessages(warning= None):
     if (warning == 'invalidPlatform'):
         platformWarningBox.exec_()
 
+
 def main():
     app = QApplication(sys.argv)
-    mainProgram = Frame()
+    mainProgram = Main()
     sys.exit(app.exec_())
 
 if __name__ == '__main__':

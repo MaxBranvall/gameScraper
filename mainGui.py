@@ -282,9 +282,9 @@ class PriceandTitleScreen(QWidget):
         cacheLine1 = linecache.getline(self.cacheFile, 1)
 
         # Create widgets here
-        self.gameTitleLabel = QLabel(cacheLine1)
+        self.gameTitleLabel = QLabel('Game Here')
         self.listPriceLabel = QLabel('List Price:')
-        self.gamePriceLabel = QLabel('Price')
+        self.gamePriceLabel = QLabel('Price Here')
         self.testButton = QPushButton('change text')
         self.testButton1 = QPushButton('change layout', self)
 
@@ -310,7 +310,7 @@ class PriceandTitleScreen(QWidget):
 
         gameTitleForm = QFormLayout()
         gameTitleForm.addRow(self.gameTitleLabel)
-        gameTitleForm.addRow(self.testButton)
+        # gameTitleForm.addRow(self.testButton)
 
         self.gameTitleHbox = QHBoxLayout()
         self.gameTitleHbox.addStretch()
@@ -370,7 +370,10 @@ class PriceandTitleScreen(QWidget):
 
         writeToCacheFile.write('{}\n{}' .format(gameTitle, gamePrice))
 
-        cacheLine1 = linecache.getline(self.cacheFile, 1)
+        titleFromCache = linecache.getline(self.cacheFile, 1)
+
+        self.gameTitleLabel.setText(titleFromCache)
+        self.update()
 
         print(gameTitle, gamePrice)
 

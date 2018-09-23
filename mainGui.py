@@ -5,7 +5,8 @@
 
 # This is in empty price list branch
 
-import sys, backend, random, linecache, Untitled
+import sys, backend, random, linecache
+import _pickle as pickle
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QPushButton,
                             QLabel, QLineEdit, QComboBox, QMainWindow, 
                             QWidget, QApplication, QMessageBox, QDesktopWidget, QStackedWidget, QStackedLayout)
@@ -26,13 +27,17 @@ class GUI_IO:
         gameTitle = title
         gamePrice = price
 
-        priceAndTitleScreen = PriceandTitleScreen()
+        mainFrame = Main()
 
-        priceAndTitleScreen.fromGUI_IO(gameTitle, gamePrice)
+        mainFrame.pickleHandling(gameTitle, gamePrice)
+        # mainFrame.show2()
 
 
 # The frame and main window.
 class Main(QMainWindow):
+
+    titleCachePath = 'cache/titleCache.cache'
+    priceCachePath = 'cache/priceCache.cache'
 
     def __init__(self):
         
@@ -46,17 +51,56 @@ class Main(QMainWindow):
         self.mainMenuScreen = MainMenuScreen()
         self.setCentralWidget(self.mainMenuScreen)
 
-        self.mainMenuScreen.testButton.clicked.connect(self.showPriceandTitleScreen)
-        self.mainMenuScreen.searchButton.clicked.connect(self.showPriceandTitleScreen)
+        self.mainMenuScreen.testButton.clicked.connect(self.show2)
+        self.mainMenuScreen.searchButton.clicked.connect(self.show2)
         self.show()
 
-    def showPriceandTitleScreen(self):
-
+    def show2(self):
         self.priceAndTitleScreen = PriceandTitleScreen()
         self.setCentralWidget(self.priceAndTitleScreen)
-        
+
         self.priceAndTitleScreen.testButton1.clicked.connect(self.showMainMenuScreen)
-        self.show()
+
+    def pickleHandling(self, title=None, price=None):
+        print('writing')
+
+        try:
+            with open(self.titleCachePath, 'wb') as titleCache:
+                pickle.dump(title, titleCache)
+                print('HEATHER')
+
+        except FileNotFoundError:
+            with open(self.titleCachePath, 'xb') as x:
+                self.pickleHandling() 
+
+        with open(self.titleCachePath, 'rb') as readCache:
+            self.titleLoad = pickle.load(readCache)
+            print(self.titleLoad)
+
+        try:
+            with open(self.priceCachePath, 'wb') as priceCache:
+                pickle.dump(price, priceCache)
+                print('dumped')
+
+        except FileNotFoundError:
+            with open(self.priceCachePath, 'xb') as x:
+                self.pickleHandling() 
+
+        with open(self.priceCachePath, 'rb') as readCache:
+            self.priceLoad = pickle.load(readCache)
+            print(self.priceLoad)
+
+    def showNow(self, title='Hello World', mode=1):
+        if mode == 1:
+            print('search pressed')
+            print(title)
+            self.priceAndTitleScreen = PriceandTitleScreen()
+            self.setCentralWidget(self.priceAndTitleScreen)
+            # self.priceAndTitleScreen.gameTitleLabel.setText(title)
+
+            self.show()
+        elif mode == 2:
+            print('from func')
 
     def windowPreferences(self):
 
@@ -259,6 +303,7 @@ class PriceandTitleScreen(QWidget):
     def __init__(self):
 
         super().__init__()
+        print('line 288 pricescreen init')
 
         self.mainFontColor = 'color: #d3d3d3'  # Light grey font color
 
@@ -279,7 +324,8 @@ class PriceandTitleScreen(QWidget):
 
     def initUI(self):
 
-        cacheLine1 = linecache.getline(self.cacheFile, 1)
+        titlePath = 'cache/titleCache.cache'
+        pricePath = 'cache/priceCache.cache'
 
         # Create widgets here
         self.gameTitleLabel = QLabel('Game Here')
@@ -292,6 +338,14 @@ class PriceandTitleScreen(QWidget):
         self.gameTitleLabel.setFont(self.mainTitleFont)
         self.listPriceLabel.setFont(self.subTitleFont)
         self.gamePriceLabel.setFont(self.subTitleFont)
+
+        with open(titlePath, 'rb') as cache:
+            title = pickle.load(cache)
+            self.gameTitleLabel.setText(title)
+
+        with open(pricePath, 'rb') as priceCache:
+            price = pickle.load(priceCache)
+            self.gamePriceLabel.setText(price)
 
         self.gameTitleLabel.setStyleSheet(self.mainFontColor)
         self.listPriceLabel.setStyleSheet(self.mainFontColor)

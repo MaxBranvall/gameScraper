@@ -4,7 +4,6 @@ import requests, urllib, backend
 from lxml import html
 
 #TODO Refactor
-#bug04
 
 url = [
     'https://www.bing.com/search?q=',
@@ -20,9 +19,9 @@ class SCRAPER_IO:
 
         Scraping.getURL(game, platform)
 
-    def sendToBackend(gameTitle, gamePrice):
+    def sendToBackend(gameTitle, gamePrice, priceType):
 
-        backend.BACKEND_IO.inputFromScraper(gameTitle, gamePrice)
+        backend.BACKEND_IO.inputFromScraper(gameTitle, gamePrice, priceType)
 
 
 class Scraping:
@@ -76,7 +75,7 @@ class Scraping:
 
         except IndexError:
             print(getBingPage)
-            print('Index Error line 43')
+            print('Index Error line 78')
 
     def retrievePage(amazonLink):
 
@@ -116,14 +115,14 @@ class Utility:
     def setPriceandTitle(n, title, price1, price2):
 
         if n == 0:
-            print('Amazon Price')
+            priceType = "Amazon Price"
         
         elif n == 1:
-            print('Digital Price')
+            priceType = "Digital Price"
 
         else:
-            print('Used Price')
+            priceType = "Used Price"
 
         price = ('${}.{}' .format(price1[0], price2[0]))
         
-        SCRAPER_IO.sendToBackend(title, price)
+        SCRAPER_IO.sendToBackend(title, price, priceType)

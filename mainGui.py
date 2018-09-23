@@ -5,15 +5,16 @@
 
 # This is in empty price list branch
 
-import sys, backend, random, linecache
+import sys, backend, random
 import _pickle as pickle
 from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QPushButton,
                             QLabel, QLineEdit, QComboBox, QMainWindow, 
                             QWidget, QApplication, QMessageBox, QDesktopWidget, QStackedWidget, QStackedLayout)
 from PyQt5.QtGui import QFont
 
-
-# testtest
+titleCachePath = 'cache/titleCache.cache'
+priceCachePath = 'cache/priceCache.cache'
+typeCache = 'cache/typeCache.cache'
 
 # This class will handle all input and output for the GUI
 class GUI_IO:
@@ -36,10 +37,6 @@ class GUI_IO:
 
 # The frame and main window.
 class Main(QMainWindow):
-
-    titleCachePath = 'cache/titleCache.cache'
-    priceCachePath = 'cache/priceCache.cache'
-    priceTypeCache = 'cache/typeCache.cache'
 
     def __init__(self):
         
@@ -66,27 +63,27 @@ class Main(QMainWindow):
     def pickleHandling(self, title=None, price=None, priceType=None):
 
         try: # Dump title to pickle file
-            with open(self.titleCachePath, 'wb') as titleCache:
+            with open(titleCachePath, 'wb') as titleCache:
                 pickle.dump(title, titleCache)
 
         except FileNotFoundError:
-            with open(self.titleCachePath, 'xb') as x:
+            with open(titleCachePath, 'xb') as x:
                 self.pickleHandling() 
 
         try: # Dump price to pickle file
-            with open(self.priceCachePath, 'wb') as priceCache:
+            with open(priceCachePath, 'wb') as priceCache:
                 pickle.dump(price, priceCache)
 
         except FileNotFoundError:
-            with open(self.priceCachePath, 'xb') as x:
+            with open(priceCachePath, 'xb') as x:
                 self.pickleHandling() 
 
         try: # Dump price type to pickle file
-            with open(self.priceTypeCache, 'wb') as typeCache:
-                pickle.dump(priceType, typeCache)
+            with open(typeCache, 'wb') as typeFile:
+                pickle.dump(priceType, typeFile)
 
         except FileNotFoundError:
-            with open(self.priceTypeCache, 'xb') as x:
+            with open(typeCache, 'xb') as x:
                 self.pickleHandling()
 
     def windowPreferences(self):
@@ -331,6 +328,20 @@ class PriceandTitleScreen(QWidget):
         self.labelLayout()
         self.extraVBoxes()
 
+    def setLabels(self):
+
+        with open(titleCachePath, 'rb') as cache:
+            title = pickle.load(cache)
+            self.gameTitleLabel.setText(title)
+
+        with open(priceCachePath, 'rb') as priceCache:
+            price = pickle.load(priceCache)
+            self.gamePriceLabel.setText(price)
+
+        with open(typeCache, 'rb') as typeFile:
+            priceType = pickle.load(typeFile)
+            self.listPriceLabel.setText(f'{priceType}:')
+
     def labelLayout(self):
 
         gameTitleForm = QFormLayout()
@@ -368,25 +379,6 @@ class PriceandTitleScreen(QWidget):
 
         self.bottomVBox = QVBoxLayout()
         self.bottomVBox.addStretch()
-
-    def setLabels(self):
-
-        titlePath = 'cache/titleCache.cache'
-        pricePath = 'cache/priceCache.cache'
-        priceTypeCache = 'cache/typeCache.cache'
-
-        with open(titlePath, 'rb') as cache:
-            title = pickle.load(cache)
-            self.gameTitleLabel.setText(title)
-
-        with open(pricePath, 'rb') as priceCache:
-            price = pickle.load(priceCache)
-            self.gamePriceLabel.setText(price)
-
-        with open(priceTypeCache, 'rb') as typeCache:
-            priceType = pickle.load(typeCache)
-            self.listPriceLabel.setText(f'{priceType}:')
-
 
 # displays error messages
 

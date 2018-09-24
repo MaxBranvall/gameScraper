@@ -1,5 +1,5 @@
-# Recieves and scrapes specified webpages. Will recieve properly handled user inputs
-# from backend. Scraping results will be sent to backend.py.
+"""Recieves and scrapes specified webpages. Will recieve properly handled user inputs from backend. Scraping results will be sent to backend.py."""
+
 import requests, urllib, backend
 from lxml import html
 

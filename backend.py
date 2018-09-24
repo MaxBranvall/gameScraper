@@ -1,5 +1,5 @@
-# Handles all I/O between files. Modifies and formats text as needed before
-# sending off to appropriate file.
+"""Handles all I/O between files. Modifies and formats text as needed before sending off to appropriate file."""
+
 import webScraper, mainGui
 
 class BACKEND_IO:
@@ -26,7 +26,6 @@ class BACKEND_IO:
 class Modification:
 
     def gameAndPlatformModification(game, platform):
-
 
         gameSplit = game.split()
         platformSplit = platform.split()

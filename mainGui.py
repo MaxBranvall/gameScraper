@@ -1,9 +1,6 @@
-# GUI of the program. User inputs will be sent to backend.py to be handled.
-# Prices, titles, etc. will be recieved from backend.py ready to be displayed.
+"""GUI of the program. User inputs will be sent to backend.py to be handled. Prices, titles, etc. will be recieved from backend.py ready to be displayed."""
 
 # BUG light grey/default background is bugged and doesn't clear textbox and combo box properly..
-
-# This is in empty price list branch
 
 import sys, backend, random
 import _pickle as pickle
@@ -56,10 +53,17 @@ class Main(QMainWindow):
         self.show()
 
     def showPriceandTitleScreen(self):
-        self.priceAndTitleScreen = PriceandTitleScreen()
-        self.setCentralWidget(self.priceAndTitleScreen)
 
-        self.priceAndTitleScreen.testButton1.clicked.connect(self.showMainMenuScreen)
+        global warningEnabled
+
+        if (warningEnabled == True):
+            print('warning is true')
+        
+        else:
+            self.priceAndTitleScreen = PriceandTitleScreen()
+            self.setCentralWidget(self.priceAndTitleScreen)
+
+            self.priceAndTitleScreen.testButton1.clicked.connect(self.showMainMenuScreen)
 
     def pickleHandling(self, title=None, price=None, priceType=None):
 
@@ -265,6 +269,8 @@ class MainMenuScreen(QWidget):
             warningMessages(warning='invalidGame')
         
         else:
+            global warningEnabled
+            warningEnabled = False
             GUI_IO.sendToBackend(gameChoice, platFormChoice)
             self.chooseGameTextbox.clear()
 

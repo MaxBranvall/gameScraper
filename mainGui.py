@@ -12,6 +12,8 @@ from PyQt5.QtWidgets import (QVBoxLayout, QHBoxLayout, QFormLayout, QPushButton,
                             QWidget, QApplication, QMessageBox, QDesktopWidget, QStackedWidget, QStackedLayout)
 from PyQt5.QtGui import QFont
 
+warningEnabled = False
+
 titleCachePath = 'cache/titleCache.cache'
 priceCachePath = 'cache/priceCache.cache'
 typeCache = 'cache/typeCache.cache'
@@ -29,8 +31,6 @@ class GUI_IO:
         gameTitle = title
         gamePrice = price
 
-        print("Gui {}" .format(priceType))
-
         mainFrame = Main()
         mainFrame.pickleHandling(gameTitle, gamePrice, priceType)
 
@@ -39,7 +39,7 @@ class GUI_IO:
 class Main(QMainWindow):
 
     def __init__(self):
-        
+
         super().__init__()
         
         self.windowPreferences()
@@ -52,6 +52,7 @@ class Main(QMainWindow):
 
         self.mainMenuScreen.testButton.clicked.connect(self.showPriceandTitleScreen)
         self.mainMenuScreen.searchButton.clicked.connect(self.showPriceandTitleScreen)
+
         self.show()
 
     def showPriceandTitleScreen(self):
@@ -113,7 +114,7 @@ class MainMenuScreen(QWidget):
 
     PLATFORMS = ['Selections:', 'Xbox One', 'PlayStation 4', 'PC', 'Nintendo Switch']
 
-    def __init__(self, layout=1):
+    def __init__(self):
 
         super().__init__()
 
@@ -166,12 +167,10 @@ class MainMenuScreen(QWidget):
         self.choosePlatformLabel.setStyleSheet(self.mainFontColor)
 
         self.searchButton.clicked.connect(self.resultsToGUI_IO)
-        self.clearTextboxButton.clicked.connect(self.clearTextbox)
+        # self.clearTextboxButton.clicked.connect(self.clearTextbox)
 
         self.testButton.move(10, 10)
         self.testButton.resize(self.testButton.sizeHint())
-
-        # self.savedSearchesButton.disconnect()
 
         # Call layout methods here
         self.labelLayout()
@@ -179,24 +178,6 @@ class MainMenuScreen(QWidget):
         self.extraVBoxes()
 
     # Functionality Methods
-
-    def changeText(self):
-        print('button clicked')
-        # self.welcomeTitle.setText('Changed')
-
-    def switchLayoutTest(self):
-        pass
-
-    # def closeWindow(self):
-    #     # self.close()
-    #     pass
-
-    def clearTextbox(self):
-        self.chooseGameTextbox.clear()
-
-    def statusBarHandling(self, message=None):
-
-        pass
 
     # Layout Methods
 
@@ -267,17 +248,22 @@ class MainMenuScreen(QWidget):
             gameChoice = self.chooseGameTextbox.text()
             platFormChoice = self.choosePlatformBox.currentText()
 
+            if (gameChoice.split() == []):
+                raise TypeError
+
             if (platFormChoice == self.PLATFORMS[0]):
                 raise ValueError
         
         except ValueError:
             # display warning message in window
             warningMessages(warning='invalidPlatform')
+
+        except TypeError:
+            warningMessages(warning='invalidGame')
         
         else:
             GUI_IO.sendToBackend(gameChoice, platFormChoice)
             self.chooseGameTextbox.clear()
-            self.switchLayoutTest()
 
 
 class PriceandTitleScreen(QWidget):
@@ -384,6 +370,9 @@ class PriceandTitleScreen(QWidget):
 
 def warningMessages(warning=None):
 
+    global warningEnabled
+    warningEnabled = True
+
     oopsMessages = ['Oops!', 'Whoops!', 'Uh-Oh!', 'Well..', 'Hmm..']
     randNum = random.randint(0, len(oopsMessages) - 1)
     randomMessage = (oopsMessages[randNum])
@@ -409,6 +398,16 @@ def main():
     app = QApplication(sys.argv)
     mainProgram = Main()
     sys.exit(app.exec_())
+
+def printWarningStatus():
+    from time import sleep
+    print('enabled')
+
+    sleep(3)
+    print(warningEnabled)
+
+    return printWarningStatus()
+
 
 if __name__ == '__main__':
     main()

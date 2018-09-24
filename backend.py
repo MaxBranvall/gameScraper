@@ -27,18 +27,10 @@ class Modification:
 
     def gameAndPlatformModification(game, platform):
 
-        try:
-            gameSplit = game.split()
-            platformSplit = platform.split()
 
-            if (gameSplit == []):
-                raise ValueError
+        gameSplit = game.split()
+        platformSplit = platform.split()
 
-        except ValueError:
-            
-            mainGui.warningMessages(warning= 'invalidGame')
-
-        else:
-            gameJoin = '+'.join(gameSplit)
-            platformJoin = '+'.join(platformSplit)
-            BACKEND_IO.sendToScraper(gameJoin, platformJoin)        
+        gameJoin = '+'.join(gameSplit)
+        platformJoin = '+'.join(platformSplit)
+        BACKEND_IO.sendToScraper(gameJoin, platformJoin)        

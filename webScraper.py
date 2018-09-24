@@ -102,17 +102,22 @@ class Utility:
 
     def getPrice(amazonPage, title, n= 0):
 
-        price1 = amazonPage.xpath('//*[@id="{}"]/span[2]/text()' .format(Utility.priceSpecs[n]))
-        price2 = amazonPage.xpath('//*[@id="{}"]/span[3]/text()' .format(Utility.priceSpecs[n]))
+        if (n in list(range(0, 3))):
+            price1 = amazonPage.xpath('//*[@id="{}"]/span[2]/text()' .format(Utility.priceSpecs[n]))
+            price2 = amazonPage.xpath('//*[@id="{}"]/span[3]/text()' .format(Utility.priceSpecs[n]))
 
-        if price1 == []:
-            n += 1
-            Utility.getPrice(amazonPage, title, n= n)
+            if price1 == []: # If the price is an empty list, try the next index in priceSpecs
+                n += 1
+                Utility.getPrice(amazonPage, title, n= n)
 
-        else:
-            Utility.setPriceandTitle(n, title, price1, price2)
+            else: # If price1 is != [], pass all parameters to be set and ready to send to backend
+                Utility.setPriceandTitle(n, title, price1, price2)
 
-    def setPriceandTitle(n, title, price1, price2):
+        elif (n == 3):
+            price = amazonPage.xpath('//*[@id="buybox"]/div[1]/span/a/text()')
+            Utility.setPriceandTitle(n, title, usedPrice=price)
+
+    def setPriceandTitle(n, title, price1=None, price2=None, usedPrice=None):
 
         if n == 0:
             priceType = "Amazon Price"
@@ -120,9 +125,16 @@ class Utility:
         elif n == 1:
             priceType = "Digital Price"
 
-        else:
+        elif n == 2:
             priceType = "Used Price"
 
-        price = ('${}.{}' .format(price1[0], price2[0]))
-        
-        SCRAPER_IO.sendToBackend(title, price, priceType)
+        elif n == 3:
+            priceType = "Used and New From"
+
+        if (n in list(range(0,3))):
+            price = ('${}.{}' .format(price1[0], price2[0]))
+            SCRAPER_IO.sendToBackend(title, price, priceType)
+
+        if (n == 3):
+            price = usedPrice[0].split()[-1]
+            SCRAPER_IO.sendToBackend(title, price, priceType)

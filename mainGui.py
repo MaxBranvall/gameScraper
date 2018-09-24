@@ -167,7 +167,7 @@ class MainMenuScreen(QWidget):
         self.choosePlatformLabel.setStyleSheet(self.mainFontColor)
 
         self.searchButton.clicked.connect(self.resultsToGUI_IO)
-        # self.clearTextboxButton.clicked.connect(self.clearTextbox)
+        self.clearTextboxButton.clicked.connect(self.clearTextbox)
 
         self.testButton.move(10, 10)
         self.testButton.resize(self.testButton.sizeHint())
@@ -178,6 +178,9 @@ class MainMenuScreen(QWidget):
         self.extraVBoxes()
 
     # Functionality Methods
+
+    def clearTextbox(self):
+        self.chooseGameTextbox.clear()
 
     # Layout Methods
 
@@ -398,16 +401,6 @@ def main():
     app = QApplication(sys.argv)
     mainProgram = Main()
     sys.exit(app.exec_())
-
-def printWarningStatus():
-    from time import sleep
-    print('enabled')
-
-    sleep(3)
-    print(warningEnabled)
-
-    return printWarningStatus()
-
 
 if __name__ == '__main__':
     main()

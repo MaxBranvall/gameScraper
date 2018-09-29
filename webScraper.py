@@ -81,26 +81,12 @@ class Scraping:
 
         def getTitle():
 
-            EDITIONS = ['Standard', 'Day', 'One', 'Ultimate', 'Collector\'s', 'Edition', '-']
-            PLATFORMS = ['-', 'Xbox', 'One', 'PlayStation', '4', 'PC', 'Nintendo', 'Switch']
-
             rawTitle = amazonContent.xpath('//*[@id="productTitle"]/text()')
             titleSplit = rawTitle[0].split()
-            removePlatformFromTitle = [string for string in titleSplit if string not in PLATFORMS] # returns Rocket League: Collector's Edition instead of Rocket League: Collector's Edition - Xbox One
 
-            isolateGameEdition = [string for string in removePlatformFromTitle if string in EDITIONS] # returns Collector's Edition
+            gameTitle = ' '.join(titleSplit)
             
-            if (isolateGameEdition == []):
-                gameTitle = ' '.join(removePlatformFromTitle)
-                return gameTitle
-            
-            else:
-                removeEditionFromTitle = [string for string in removePlatformFromTitle if string not in isolateGameEdition] # Returns Rocket League: 
-                gameEdition = ' '.join(isolateGameEdition)
-                gameTitleScratch = ' '.join(removeEditionFromTitle)
-                gameTitle = ('  {}\n{}' .format(gameTitleScratch, gameEdition))
-
-                return gameTitle
+            return gameTitle
 
         print('retrieve page')
         print(amazonLink)
